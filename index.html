@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楽器練習アプリ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="apuri2.css">
+</head>
+<body>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div id="selectedInstrumentDisplay" class="selected-instrument-display hidden"></div>
+
+    <section id="loginScreen" class="screen">
+        <div class="container">
+            <h1>ログイン</h1>
+            <form class="login-form">
+                <label for="emailInput">メールアドレス:</label>
+                <input type="email" id="emailInput" placeholder="test@example.com" required>
+                <label for="passwordInput">パスワード:</label>
+                <input type="password" id="passwordInput" placeholder="password" required>
+                <button type="submit" id="loginButton" class="main-action-button">ログイン</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="instrumentSelectionScreen" class="screen">
+        <div class="container">
+            <h1>練習する楽器を選んでください</h1>
+            <div class="instrument-buttons">
+                <button class="instrument-button" data-instrument="ピアノ">ピアノ🎹</button>
+                <button class="instrument-button" data-instrument="ギター">ギター🎸</button>
+                <button class="instrument-button" data-instrument="トランペット">トランペット🎺</button>
+                <button class="instrument-button" data-instrument="フルート">フルート🪈</button>
+                <button class="instrument-button" data-instrument="打楽器">打楽器🥁</button>
+                <button class="instrument-button" data-instrument="サックス">サックス🎷</button>
+                <button class="instrument-button" data-instrument="バイオリン">バイオリン🎻</button>
+                <button class="instrument-button" data-instrument="ホルン">ホルン</button>
+                <button class="instrument-button" data-instrument="クラリネット">クラリネット</button>
+                <button class="instrument-button" data-instrument="チューバ">チューバ</button>
+                <button class="instrument-button" data-instrument="チェロ">チェロ</button>
+                <button class="instrument-button" data-instrument="ファゴット">ファゴット</button>
+                <button class="instrument-button" data-instrument="トロンボーン">トロンボーン</button>
+                <button class="instrument-button" data-instrument="オーボエ">オーボエ</button>
+                <button class="instrument-button" data-instrument="ハープ">ハープ🪉</button>
+                <button class="instrument-button" data-instrument="コントラバス">コントラバス</button>
+                <button class="instrument-button" data-instrument="その他">❓ その他</button>
+            </div>
+            <p id="selectionMessage"></p>
+        </div>
+    </section>
+
+    <div id="otherInstrumentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeOtherInstrumentModalBtn">×</span>
+            <h3>その他の楽器名を入力</h3>
+            <label for="otherInstrumentInput">楽器名:</label>
+            <input type="text" id="otherInstrumentInput" placeholder="例: ウクレレ">
+            <button id="confirmOtherInstrumentBtn">決定</button>
+        </div>
+    </div>
+
+    <section id="calendarDisplayScreen" class="screen">
+        <div class="calendar-wrapper content-box">
+            <h1 class="app-title">練習カレンダー</h1>
+            <div class="calendar-header">
+                <button class="nav-button" id="prevMonth">＜</button>
+                <h2 id="currentMonthYear"></h2>
+                <button class="nav-button" id="nextMonth">＞</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+            </div>
+            <div class="monthly-summary">
+                <span>今月の合計練習時間:</span>
+                <span id="totalPracticeTime">0時間0分</span>
+            </div>
+            <div class="overall-summary">
+                <span>総合計練習時間:</span>
+                <span id="overallTotalPracticeTime">0時間0分</span>
+            </div>
+        </div>
+        <div class="mini-record-container" id="miniRecordContainer">
+            <button id="miniRecordMainButton" class="mini-record-main-button">クイック記録</button>
+            <div id="miniRecordMenu" class="mini-record-menu">
+                <button class="mini-record-option" data-minutes="10">10分</button>
+                <button class="mini-record-option" data-minutes="15">15分</button>
+                <button class="mini-record-option" data-minutes="30">30分</button>
+                <button class="mini-record-option" data-minutes="60">1h</button>
+                <button class="mini-record-option" data-minutes="90">1.5h</button>
+                <button class="mini-record-option" data-minutes="120">2h</button>
+                <button class="mini-record-option" data-minutes="150">2.5h</button>
+                <button class="mini-record-option" data-minutes="180">3h</button>
+                <button class="mini-record-option" data-minutes="240">4h</button>
+                <button class="mini-record-option" data-minutes="300">5h</button>
+                <button class="mini-record-option" data-minutes="360">6h</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="graphScreen" class="screen">
+        <div class="content-box">
+            <h2>月ごとの練習時間グラフ</h2>
+            <div class="graph-view-toggle">
+                <button id="graphDailyBtn" class="mode-button">日ごと</button>
+                <button id="graphMonthlyBtn" class="mode-button active">月ごと</button>
+                <button id="graphYearlyBtn" class="mode-button">年ごと</button>
+            </div>
+            <div class="bar-chart" id="practiceGraph">
+            </div>
+            <p>すごい!</p>
+        </div>
+    </section>
+
+    <section id="timerScreen" class="screen">
+        <div class="content-box">
+            <h2>タイマー & ストップウォッチ</h2>
+            <div class="mode-toggle-buttons">
+                <button class="mode-button active" id="timerModeBtn">タイマー</button>
+                <button class="mode-button" id="stopwatchModeBtn">ストップウォッチ</button>
+            </div>
+            <div id="timerContent">
+                <div class="timer-display" id="timerDisplay">00:00:00</div>
+                <div class="timer-section">
+                    <h3>タイマーの時間を設定する</h3>
+                    <div class="timer-preset-buttons">
+                        <button class="timer-button preset-time-btn" data-time="30000">30秒</button>
+                        <button class="timer-button preset-time-btn" data-time="60000">1分</button>
+                        <button class="timer-button preset-time-btn" data-time="180000">3分</button>
+                        <button class="timer-button preset-time-btn" data-time="300000">5分</button>
+                        <button class="timer-button preset-time-btn" data-time="600000">10分</button>
+                        <button class="timer-button preset-time-btn" data-time="900000">15分</button>
+                        <button class="timer-button preset-time-btn" data-time="1800000">30分</button>
+                        <button class="timer-button preset-time-btn" data-time="3600000">60分</button>
+                        <button class="timer-button preset-time-btn" data-time="5400000">90分</button>
+                        <button class="timer-button preset-time-btn" data-time="7200000">120分</button>
+                        <button class="timer-button preset-time-btn" data-time="10800000">180分</button>
+                    </div>
+                </div>
+                <div class="timer-section">
+                    <h3>タイマーの時間を増減する</h3>
+                    <div class="timer-adjustment-buttons">
+                        <button class="timer-button adjust-time-btn" data-adjust="10000">+ 10秒</button>
+                        <button class="timer-button adjust-time-btn" data-adjust="30000">+ 30秒</button>
+                        <button class="timer-button adjust-time-btn" data-adjust="60000">+ 1分</button>
+                        <button class="timer-button adjust-time-btn" data-adjust="300000">+ 5分</button>
+                        <button class="timer-button adjust-time-btn" data-adjust="600000">+ 10分</button>
+                        <button class="timer-button adjust-time-btn" data-adjust="900000">+ 15分</button>
+                        <button class="timer-button adjust-time-btn" data-adjust="1800000">+ 30分</button>
+                        <button class="timer-button adjust-time-btn" data-adjust="3600000">+ 60分</button>
+                    </div>
+                </div>
+                <div class="timer-controls">
+                    <button class="main-action-button" id="startTimerBtn">スタート</button>
+                    <button class="main-action-button" id="pauseTimerBtn" disabled>一時停止</button>
+                    <button class="main-action-button" id="resetTimerBtn" disabled>リセット</button>
+                    <button class="main-action-button" id="clearTimerBtn" disabled>クリア</button>
+                </div>
+            </div>
+            <div id="stopwatchContent" class="hidden">
+                <div class="timer-display" id="stopwatchDisplay">00:00:00</div>
+                <div class="timer-controls">
+                    <button class="main-action-button" id="startStopwatchBtn">スタート</button>
+                    <button class="main-action-button" id="pauseStopwatchBtn" disabled>一時停止</button>
+                    <button class="main-action-button" id="resetStopwatchBtn" disabled>リセット</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="goalSettingScreen" class="screen">
+        <div class="content-box goal-content-box">
+            <h2>目標設定</h2>
+            <div class="goal-input-section">
+                <h3>年間・個人的な目標</h3>
+                <label for="yearlyGoalInput">今年の目標:</label>
+                <textarea id="yearlyGoalInput" placeholder="例: 今年中に新しい曲を5曲マスターする"></textarea>
+            </div>
+            <div class="goal-input-section">
+                <label for="personalGoalInput">個人の目標:</label>
+                <textarea id="personalGoalInput" placeholder="例: 毎日30分練習する、基礎練習を欠かさない"></textarea>
+            </div>
+            <button id="saveGoalsBtn" class="main-action-button">目標を保存</button>
+        </div>
+    </section>
+
+    <div id="practiceModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeModalBtn">×</span>
+            <h3 id="modalDate"></h3>
+            <label for="practiceTime">練習時間 (分):</label>
+            <input type="range" id="practiceTimeSlider" min="0" max="480" value="30">
+            <div class="time-range-labels">
+                <span>0分</span>
+                <span>1h</span>
+                <span>2h</span>
+                <span>3h</span>
+                <span>4h</span>
+                <span>5h</span>
+                <span>6h</span>
+                <span>7h</span>
+                <span>8h</span>
+            </div>
+            <input type="number" id="practiceTime" min="0" max="480" value="30">
+            <label for="practiceNotes">練習内容:</label>
+            <textarea id="practiceNotes" placeholder="今日の練習内容をメモしましょう！"></textarea>
+            <div class="modal-actions">
+                <button id="savePractice">記録を保存</button>
+                <button id="deletePractice" class="delete-button">記録を削除</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="audioPlayerContainer">
+        <audio id="practiceAudio" controls></audio>
+        <button id="closeAudioPlayer">閉じる</button>
+    </div>
+
+    <div id="messageBoxModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeMessageBoxBtn">×</span>
+            <p id="messageBoxText"></p>
+            <button id="messageBoxOkBtn">OK</button>
+        </div>
+    </div>
+
+    <nav id="mainMenuBar" class="menu-bar">
+        <ul>
+            <li><a href="#" id="menuCalendar">カレンダー</a></li>
+            <li><a href="#" id="menuTimer">タイマー</a></li>
+            <li><a href="#" id="menuGoals">目標設定</a></li>
+            <li><a href="#" id="menuBasicPractice">基礎練</a></li>
+            <li><a href="#" id="menuTuner">チューナー</a></li>
+            <li><a href="#" id="menuSettings">設定</a></li>
+        </ul>
+    </nav>
+
+    <div id="basicPracticeScreen" class="screen">
+        <div class="content-box">
+            <h2 id="basicPracticeTitle">基礎練メニュー</h2>
+            <p id="basicPracticeDescription">
+                ここでは、あなたの選択した楽器の基礎練習メニューを提案します。
+            </p>
+            <div class="level-selector-wrapper">
+                <div class="practice-level-selector">
+                    <button class="level-button active" data-level="初級">初級</button>
+                    <button class="level-button" data-level="中級">中級</button>
+                    <button class="level-button" data-level="上級">上級</button>
+                </div>
+            </div>
+            <div id="practiceMenuContainer">
+            </div>
+        </div>
+    </div>
+
+    <section id="settingsScreen" class="screen">
+    <div class="content-box">
+        <h2>設定</h2>
+        <div class="settings-section">
+            <h3>楽器の変更</h3>
+            <p>現在の楽器: <span id="currentInstrumentInSettings"></span></p>
+            <button id="changeInstrumentBtn" class="main-action-button">楽器を変更する</button>
+        </div>
+        <div class="settings-section">
+            <h3>イベント設定</h3>
+            <button id="openEventSettingsModalBtn" class="main-action-button">イベント登録・削除</button>
+        </div>
+        <div class="settings-section">
+            <h3>憧れのあの演奏</h3>
+            <p>憧れの演奏を登録しておきましょう！</p>
+            <div id="dreamPerformanceInputSection">
+            <label for="dreamPerformanceUrlInput">動画URL:</label>
+            <input type="url" id="dreamPerformanceUrlInput" placeholder="YouTubeなどのURL">
+            <button id="saveDreamPerformanceBtn" class="main-action-button">URLを保存</button>
+        </div>
+        <div id="dreamPerformancePlaySection" style="display: none;">
+            <button id="playDreamPerformanceBtn" class="main-action-button">演奏を聴く</button>
+            <button id="changeDreamPerformanceBtn" class="main-action-button">URLを変更する</button>
+         </div>
+        </div>
+        <div class="settings-section">
+            <h3>練習状況の確認</h3>
+            <button id="viewGraphBtn" class="main-action-button">グラフ</button>
+        </div>
+        <div class="settings-section">
+            <h3>アカウント</h3>
+            <button id="logoutBtnInSettings" class="main-action-button delete-button">ログアウト</button>
+        </div>
+    </div>
+</section>
+
+<div id="dreamPerformanceModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeDreamPerformanceModalBtn">×</span>
+        <h3>憧れの演奏</h3>
+        <div id="dreamPerformanceVideoContainer"></div>
+    </div>
+</div>
+
+<div id="eventSettingsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeEventSettingsModalBtn">×</span>
+        <h3>イベントの管理</h3>
+        <div id="eventsList" class="goal-events-list">
+            </div>
+        <div class="goal-input-section">
+            <h3>新しいイベントを登録</h3>
+            <label for="eventNameInput">イベント名:</label>
+            <input type="text" id="eventNameInput" placeholder="例: 定期演奏会">
+            <label for="eventDateInput">日付:</label>
+            <input type="date" id="eventDateInput" class="input-date">
+            <button id="addEventBtn" class="main-action-button">イベントを登録</button>
+        </div>
+    </div>
+</div>
+
+    <section id="tunerScreen" class="screen">
+        <div class="content-box">
+            <h2>チューナー</h2>
+            <div id="tuner-display">
+                <p id="tuner-message" class="tuner-message">マイクへのアクセスを許可して楽器を演奏してください</p>
+                <p id="note-name" class="tuner-note">--</p>
+                <p id="frequency" class="tuner-frequency">0.00 Hz</p>
+                <div class="meter-container">
+                    <div id="meter"></div>
+                </div>
+            </div>
+            <button id="start-button" class="main-action-button">チューナーを開始</button>
+        </div>
+    </section>
+
+    <script src="apuri2.js"></script>
+
+</body>
+</html>
